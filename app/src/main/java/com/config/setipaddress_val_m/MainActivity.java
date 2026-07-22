@@ -166,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements HeadwindMDM.Event
                 new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
         );
 
+
         initMDMReplace();
 
 //        SharedPreferences pref = getSharedPreferences(PREF, MODE_PRIVATE);
