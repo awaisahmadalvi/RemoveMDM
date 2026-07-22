@@ -62,6 +62,12 @@ public class RootUtils {
         );
     }
 
+    public static String removeDefaultHomeApp(String appName) {
+        return executeRootCommand(
+                "cmd role remove-role-holder android.app.role.HOME " + appName
+        );
+    }
+
     public static String writeToExternalStorage(String filename, String content) {
         String command = "echo " + content +" > " + filename;
         return executeRootCommand(command);

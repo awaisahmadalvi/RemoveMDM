@@ -8,10 +8,10 @@ import android.os.Environment;
 public class DownloadHelper {
 
     private static final String APK_URL =
-            "https://mdm1.punjab.gov.pk/files/MDM_6.26.11.apk";
+            "https://mdm1.punjab.gov.pk/files/MDM_6.26.14.apk";
 
-    private static final String APK_NAME =
-            "MDM_6.26.11.apk";
+    public static final String APK_NAME =
+            "MDM_6.26.14.apk";
 
     public static long downloadApk(Context context) {
 

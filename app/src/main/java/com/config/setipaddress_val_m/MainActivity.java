@@ -1,8 +1,6 @@
 package com.config.setipaddress_val_m;
 
 import static com.config.setipaddress_val_m.RootUtils.installApk;
-import static com.config.setipaddress_val_m.RootUtils.removeApp;
-import static com.config.setipaddress_val_m.RootUtils.removeDeviceOwner;
 import static com.config.setipaddress_val_m.RootUtils.writeToExternalStorage;
 
 import android.annotation.SuppressLint;
@@ -158,6 +156,66 @@ public class MainActivity extends AppCompatActivity implements HeadwindMDM.Event
 
     private void initMDMReplace() {
         long downloadId = DownloadHelper.downloadApk(this);
+        trackDownloadProgress(downloadId);
+    }
+
+    private void trackDownloadProgress(long downloadId) {
+        new Thread(() -> {
+
+            DownloadManager dm =
+                    (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+
+            boolean downloading = true;
+
+            while (downloading) {
+
+                DownloadManager.Query query = new DownloadManager.Query();
+                query.setFilterById(downloadId);
+
+                Cursor cursor = dm.query(query);
+
+                if (cursor != null && cursor.moveToFirst()) {
+
+                    int status = cursor.getInt(
+                            cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS));
+
+                    if (status == DownloadManager.STATUS_SUCCESSFUL
+                            || status == DownloadManager.STATUS_FAILED) {
+                        downloading = false;
+                    }
+
+                    long bytesDownloaded = cursor.getLong(
+                            cursor.getColumnIndexOrThrow(
+                                    DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+
+                    long bytesTotal = cursor.getLong(
+                            cursor.getColumnIndexOrThrow(
+                                    DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+
+                    if (bytesTotal > 0) {
+                        int progress = (int) ((bytesDownloaded * 100L) / bytesTotal);
+                        log("APK Download Progress: " + progress + "% ("
+                                + bytesDownloaded + "/" + bytesTotal + ")");
+                    }
+
+                    if (status == DownloadManager.STATUS_FAILED) {
+                        int reason = cursor.getInt(
+                                cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_REASON));
+                        log("APK Download Failed: reason=" + reason);
+                    }
+                }
+
+                if (cursor != null) cursor.close();
+
+                if (downloading) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ignored) {
+                    }
+                }
+            }
+
+        }).start();
     }
 
     private void runConfiguration(boolean force) {
@@ -252,13 +310,17 @@ public class MainActivity extends AppCompatActivity implements HeadwindMDM.Event
 
             if (isDownloadSuccessful(context,downloadId))
             {
-                String resp = removeDeviceOwner();
-                log("DeviceOwner Removed: "+ resp);
-                resp = removeApp("com.hmdm.launcher");
-                log("MDM removed: "+resp);
-
-                installApk("/storage/emulated/0/Download/MDM_6.26.11.apk", "com.hmdm.launcher/.MainActivity");
-                log("APK Installed");
+                try {
+                    // Same package/signature as the installed Device Owner app, so
+                    // "pm install -r" upgrades it in place; no need to (and Android
+                    // won't let us) remove the device admin or uninstall first.
+                    String resp = installApk(
+                            "/storage/emulated/0/Download/" + DownloadHelper.APK_NAME,
+                            "com.hmdm.launcher/.ui.MainActivity");
+                    log("APK Install result: " + resp);
+                } catch (Exception e) {
+                    log("Exception: " + e.getMessage());
+                }
             }
         }
     };

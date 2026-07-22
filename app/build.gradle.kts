@@ -4,11 +4,7 @@ plugins {
 
 android {
     namespace = "com.config.setipaddress_val_m"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.config.setipaddress_val_m"
