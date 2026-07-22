@@ -79,7 +79,6 @@ public class RootUtils {
     public static String installApk(String filename, String activity) {
 //        pm install /storage/emulated/0/Download/MDM_6.26.11.apk && am start -n com.hmdm.launcher/.MainActivity
         String command = "pm install -r " + filename + " && am start -n " + activity;
-
         return executeRootCommand(command);
     }
 
