@@ -1,5 +1,15 @@
 package com.config.setipaddress_val_m;
 
+import static android.provider.Settings.System.getString;
+
+import android.app.ProgressDialog;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Handler;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
@@ -57,9 +67,8 @@ public class RootUtils {
     }
 
     public static String removeDeviceOwner() {
-        return executeRootCommand(
-                "dpm remove-active-admin --user 0 com.hmdm.launcher/.AdminReceiver"
-        );
+        /* OPEN: from MDM */
+        return executeRootCommand("am kill com.hmdm.launcher","dpm remove-active-admin --user 0 com.hmdm.launcher/.AdminReceiver");
     }
 
     public static String writeToExternalStorage(String filename, String content) {
