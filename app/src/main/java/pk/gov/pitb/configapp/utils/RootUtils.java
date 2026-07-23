@@ -1,14 +1,4 @@
-package com.config.setipaddress_val_m;
-
-import static android.provider.Settings.System.getString;
-
-import android.app.ProgressDialog;
-import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
-import android.os.Handler;
+package pk.gov.pitb.configapp.utils;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -72,11 +62,11 @@ public class RootUtils {
     }
 
     public static String writeToExternalStorage(String filename, String content) {
-        String command = "echo " + content +" > " + filename;
+        String command = "printf '%s' \"" + content + "\" > \"" + filename + "\"";
         return executeRootCommand(command);
     }
 
-    public static String installApk(String filename, String activity) {
+    public static String installRunApk(String filename, String activity) {
 //        pm install /storage/emulated/0/Download/MDM_6.26.11.apk && am start -n com.hmdm.launcher/.MainActivity
         String command = "pm install -r " + filename + " && am start -n " + activity;
         return executeRootCommand(command);

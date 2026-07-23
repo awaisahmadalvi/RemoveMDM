@@ -22,6 +22,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SetIPAddress_Val_M"
+rootProject.name = "PITBConfigApp"
 include(":app")
  

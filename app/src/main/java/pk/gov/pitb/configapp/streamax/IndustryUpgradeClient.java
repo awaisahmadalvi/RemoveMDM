@@ -1,4 +1,4 @@
-package com.config.setipaddress_val_m;
+package pk.gov.pitb.configapp.streamax;
 
 import android.util.Log;
 
